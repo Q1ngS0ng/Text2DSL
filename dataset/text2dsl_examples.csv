@@ -1,0 +1,337 @@
+Log_Type_ID,Query,SLS,log_content
+,查询一下office日志表，这些域名有没有出现过：insidious16.net nefarious17.org ominous18.com,domain:insidious16.net or domain:nefarious17.org or domain:ominous18.com,
+,查询源端口为443并且访问过如下目的IP之一的所有NAT日志：119.42.230.126 110.76.22.106 203.209.225.109 203.209.225.107 110.76.7.143 103.52.199.80,source_port:443 and (dest_ip:119.42.230.126 or dest_ip:110.76.22.106 or dest_ip:203.209.225.109 or dest_ip:203.209.225.107 or dest_ip:110.76.7.143 or dest_ip:103.52.199.80),
+,筛选包含119.167.229.212的EDR日志，给我进程名和进程出现的次数,"119.167.229.212 | SELECT processPath, COUNT(*) AS count GROUP BY processPath",
+,帮我查一下都有谁给aaa或者bbb发过邮件,mail_to:aaa or mail_to:bbb | SELECT mail_from,
+,帮我查一下办公网日志中关于103.224.182.206或tetird.com的数据,103.224.182.206 or tetird.com,
+,查询同时包含47.235.24.124和mdp_hongkong的office日志,47.235.24.124 and mdp_hongkong,
+,查询一下hostname为egumomng-*并且目的端口号为3306的aegis日志,hostname:egumomng-* and dest_prot:3306,
+,查一查是否否有使用kill -all或者pkill命令的安骑士记录，针对33.132.33.208的,"33.132.33.208 and (\""kill -all\"" or pkill)",
+,请在DNS表中检索，查询域名包含company.com或corp.com，响应时间超过200ms且响应类型为NXDOMAIN的请求,(domain:company.com or domain:corp.com) and req_time > 200 and resp_type:NXDOMAIN,
+,"查询满足发件人邮箱为user@example.com, user2@example.com或user3@example.com，且域名是任意一个：google.com, facebook.com, twitter.com的邮件日志",(mail_from:user@example.com or mail_from:user2@example.com or mail_from:user3@example.com) and (domain:google.com or domain:facebook.com or domain:twitter.com),
+,查询的EDR日志，返回104.231.65.97相关的命令行,104.231.65.97 | SELECT pcmdline,
+,查一下哪些人的电脑执行过386d058311635b5328a6c800b6718ed0程序,386d058311635b5328a6c800b6718ed0 | SELECT staff_id,
+,帮我找找最近的POI日志，172.16.0.1访问的ip,source_ip:172.16.0.1 | SELECT dst_ip,
+,帮我查下星点和EDR日志4901538dff8f1800aafa5e97c6ea2817这个进程,process:4901538dff8f1800aafa5e97c6ea2817,
+,帮我查下日志，近3天哪些IP调用过LTAITIXZIZxxxxxxxx这个AK,LTAITIXZIZxxxxxxxx | SELECT ip,
+,请帮我检索系统日志，包含IP地址192.168.0.1，用户ID为1002，操作类型为update，状态码为200，且不包含error的数据,ip:192.168.0.1 and staff_id:1002 and type:update and status:200 and not error,
+,查询星点数据，这些进程有没有出现过：C:\\Windows\\System32\\rogue.exe C:\\Program Files\\Trojan\\stealth.exe C:\\Users\\Unknown\\AppData\\Local\\Temp\\covert.exe,process:C:\\Windows\\System32\\rogue.exe or process:C:\\Program Files\\Trojan\\stealth.exe or process:C:\\Users\\Unknown\\AppData\\Local\\Temp\\covert.exe,
+,帮我查询sub.anotherdomain.com这个域名,domain:sub.anotherdomain.com,
+,查下这个文件C:\\Program Files\\FakeSecurityTest\\test.exe,C:\\Program Files\\FakeSecurityTest\\test.exe,
+,请帮我在NAT日志表中，找出所有目标端口为1234的流量记录，并统计每个源IP的流量总数,"dest_port:1234 | SELECT src_ip, COUNT(*) AS count GROUP BY src_ip",
+,使用count函数统计网站访问PV。,* | SELECT count(*) AS PV,"__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a72"
+,根据每分钟的时间粒度，统计网站访问PV。使用date_trunc函数将时间对齐到每分钟并根据时间进行分组，然后使用count函数计算每分钟的访问PV并根据时间排序。,"* | SELECT count(*) as PV, date_trunc('minute', __time__) as time GROUP BY time ORDER BY time","__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a73"
+,根据每5分钟的时间粒度，统计每个请求方法的请求次数。使用__time__ - __time__ %300将时间对齐到5分钟并根据时间进行分组，然后使用count函数计算每5分钟的请求次数并根据时间进行排序。,"* | SELECT request_method, count(*) as count, __time__ - __time__ %300 as time GROUP BY time, request_method ORDER BY time","__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a74"
+,环比上周的网站访问PV。使用count函数计算总PV数，再使用ts_compare函数得出本周与上周的环比。其中，website_log为Logstore名称。,"* | SELECT diff[1] as this_week, diff[2] as last_week, time FROM (SELECT ts_compare(pv, 604800) as diff, time FROM (SELECT COUNT(*) as pv, date_trunc('week', __time__) as time FROM website_log GROUP BY time ORDER BY time) GROUP BY time)","__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a75"
+,统计客户端地址分布情况。使用ip_to_province函数获取IP地址对应的省份并根据省份进行分组，然后再使用count函数计算每个地址出现的次数并根据次数进行排序。,"* | SELECT count(*) as count, ip_to_province(client_ip) as address GROUP BY address ORDER BY count DESC","__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a76"
+,统计访问前10的请求路径。根据请求路径进行分组，然后使用count函数计算每个路径的访问次数并根据访问次数排序。,"* | SELECT count(*) as PV, request_uri as PATH GROUP BY PATH ORDER BY PV DESC LIMIT 10","__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a77"
+,查询request_uri字段的值以%file-7结尾的日志。,* | select * from website_log where request_uri like '%file-7',"__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a78"
+,统计请求路径访问情况。使用regexp_extract函数提取request_uri字段中的文件部分，然后再使用count函数计算各个请求路径的访问次数。,"* | SELECT regexp_extract(request_uri, '.*\/(file.*)', 1) file, count(*) as count group by file","__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a79"
+,查询request_uri字段中包含%abc%的日志。,* | SELECT * where request_uri like '%/%abc/%%' escape '/',"__tag__:__client_ip__:192.0.2.0
+__tag__:__receive_time__:1609985755
+__source__:198.51.100.0
+__topic__:website_access_log
+body_bytes_sent:4512
+client_ip:198.51.100.10
+host:example.com
+http_host:example.com
+http_user_agent:Mozilla/5.0 (Macintosh; U; PPC Mac OS X 10_5_8; ja-jp) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
+http_x_forwarded_for:198.51.100.1
+instance_id:i-02
+instance_name:instance-01
+network_type:vlan
+owner_id:%abc%-01
+referer:example.com
+region:cn-shanghai
+remote_addr:203.0.113.0
+remote_user:neb
+request_length:4103
+request_method:POST
+request_time:69
+request_uri:/request/path-1/file-0
+scheme:https
+server_protocol:HTTP/2.0
+slbid:slb-02
+status:200
+time_local:07/Jan/2021:02:15:53
+upstream_addr:203.0.113.10
+upstream_response_time:43
+upstream_status:200
+user_agent:Mozilla/5.0 (X11; Linux i686) AppleWebKit/534.33 (KHTML, like Gecko) Ubuntu/9.10 Chromium/13.0.752.0 Chrome/13.0.752.0 Safari/534.33
+vip_addr:192.0.2.2
+vpc_id:3db327b1****82df19818a80"
+,统计不同请求状态对应的日志数量。,"* | SELECT ""content.status"", COUNT(*) AS PV GROUP BY ""content.status""",
+,计算不同请求时长对应的请求数量，并按照请求时长进行升序排序。,"* | SELECT ""content.time.request_time"", COUNT(*) AS count GROUP BY ""content.time.request_time"" ORDER BY ""content.time.request_time""",
+,计算不同请求方法对应的平均请求时长。,"* | SELECT avg(""content.time.request_time"") AS avg_time,""content.request.request_method""  GROUP BY ""content.request.request_method""",
+,每5分钟统计一次waiting、reading、writing、connection的平均值。,"*| select  avg(waiting) as waiting, avg(reading)  as reading,  avg(writing)  as writing,  avg(connection)  as connection,  from_unixtime( __time__ - __time__ % 300) as time group by __time__ - __time__ % 300 order by time limit 1440                       ",
+,统计最大等待连接数排名前十的服务器。,"*| select  max(waiting) as max_waiting, _address_, from_unixtime(max(__time__)) as time group by address order by max_waiting desc limit 10                        ",
+,统计IP地址数量。,* | select  count(distinct(_address_)) as total                       ,
+,统计请求失败的IP地址数量。,not _result_ : success | select  count(distinct(_address_))      ,
+,统计最近十次请求失败的IP地址。,"not _result_ : success | select _address_ as address, from_unixtime(__time__) as time  order by __time__ desc limit 10                       ",
+,每5分钟统计一次请求总数。,"*| select  avg(handled) * count(distinct(_address_)) as total_handled, avg(requests) * count(distinct(address)) as total_requests,  from_unixtime( __time__ - __time__ % 300) as time group by __time__ - __time__ % 300 order by time limit 1440                       ",
+,每5分钟统计一次平均请求延迟。,"*| select  avg(_response_time_ms_) as avg_delay,  from_unixtime( __time__ - __time__ % 300) as time group by __time__ - __time__ % 300 order by time limit 1440                      ",
+,统计请求成功的数量。,not _http_response_code_ : 200  | select  count(1)         ,
+,统计请求失败的数量。,_http_response_code_ : 200  | select  count(1)     ,
+,统计每分钟的500错误率，当最近5分钟错误率超过40%时触发报警。,"status:500 | select __topic__, max_by(error_count,window_time)/1.0/sum(error_count) as error_ratio, sum(error_count) as total_error  from (select __topic__, count(*) as error_count , __time__ - __time__ % 300  as window_time  from log group by __topic__, window_time) group by __topic__  having  max_by(error_count,window_time)/1.0/sum(error_count)   > 0.4  and sum(error_count) > 500 order by total_error desc limit 100",
+,"统计每分钟的流量，当最近的流量出现暴跌时，触发报警。 由于在最近的一分钟内，统计的数据不是一个完整分钟的，所以需要除以greatest(max(__time__) - min(__time__),1)进行归一化，统计每个分钟内的流量均值。","* | SELECT SUM(inflow) / greatest(max(__time__) - min(__time__),1) as inflow_per_minute, date_trunc('minute',__time__)  as minute group by minute",
+,按照数据区间分桶，在每个桶内计算平均延时。,"* | select avg(latency) as latency , case when originSize < 5000 then 's1' when originSize < 20000 then 's2' when originSize < 500000 then 's3' when originSize < 100000000 then 's4' else 's5' end as os group by os",
+,返回不同部门的count结果，及其所占百分比。该query结合了子查询、窗口函数。其中sum(c) over()表示计算所有行的和。,"* |  select   department, c*1.0/ sum(c) over ()  from(select  count(1) as c, department   from log group by department)",
+,统计满足条件的个数：在URL路径中，我们需要根据URL不同的特征来计数，这种情况可以使用CASE WHEN语法，但还有个更简单的语法是count_if。,"* | select  count_if(uri like '%login') as login_num, count_if(uri like '%register') as register_num, date_format(date_trunc('minute', __time__), '%m-%d %H:%i') as time  group by time order by time limit 100",
+,查询包含192.168.XX.XX的日志。,* | select * from log where key like '192.168.%.%',
+,统计在2024年3月14日至3月15日之间的日志数量,* | SELECT COUNT(1) FROM log WHERE __time__ >= to_unixtime(TIMESTAMP '2024-03-14 00:00:00') AND __time__ < to_unixtime(TIMESTAMP '2024-03-16 00:00:00')

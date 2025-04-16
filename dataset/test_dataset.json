@@ -1,0 +1,102 @@
+[
+    {
+        "query": "查询一下office日志表，这些域名有没有出现过：insidious16.net nefarious17.org ominous18.com",
+        "sls": "domain:insidious16.net or domain:nefarious17.org or domain:ominous18.com",
+        "res": ["domain:insidious16.net or domain:nefarious17.org or domain:ominous18.com",  "* | SELECT * FROM office WHERE domain IN ('insidious16.net', 'nefarious17.org', 'ominous18.com')"]
+    },
+    {
+        "query": "查询源端口为443并且访问过如下目的IP之一的所有NAT日志：119.42.230.126 110.76.22.106 203.209.225.109 203.209.225.107 110.76.7.143 103.52.199.80",
+        "sls": "source_port:443 and (dest_ip:119.42.230.126 or dest_ip:110.76.22.106 or dest_ip:203.209.225.109 or dest_ip:203.209.225.107 or dest_ip:110.76.7.143 or dest_ip:103.52.199.80)",
+        "res": ["source_port:443 and (dest_ip:119.42.230.126 or dest_ip:110.76.22.106 or dest_ip:203.209.225.109 or dest_ip:203.209.225.107 or dest_ip:110.76.7.143 or dest_ip:103.52.199.80)", "* | SELECT * FROM nat_log WHERE source_port:443 AND dest_ip IN ('119.42.230.126', '110.76.22.106', '203.209.225.109', '203.209.225.107', '110.76.7.143', '103.52.199.80')"]
+    },
+    {
+        "query": "筛选包含119.167.229.212的EDR日志，给我进程名和进程出现的次数",
+        "sls": "119.167.229.212 | SELECT processPath, COUNT(*) AS count GROUP BY processPath",
+        "res": ["119.167.229.212 | SELECT processPath, COUNT(*) AS count GROUP BY processPath","* | SELECT process_name, COUNT(*) AS process_count FROM edr_log WHERE ip = '119.167.229.212' GROUP BY process_name"]
+    },
+    {
+        "query": "帮我查一下都有谁给aaa或者bbb发过邮件",
+        "sls": "mail_to:aaa or mail_to:bbb | SELECT mail_from",
+        "res": ["mail_to:aaa or mail_to:bbb | SELECT mail_from", "* | SELECT sender, COUNT(*) AS email_count FROM log WHERE mail_to IN ('aaa', 'bbb') GROUP BY sender"]
+    },
+    {
+        "query": "帮我查一下办公网日志中关于103.224.182.206或tetird.com的数据",
+        "sls": "103.224.182.206 or tetird.com",
+        "res": ["ip:103.224.182.206 or domain:tetird.com", "* | SELECT * FROM office WHERE source_ip='103.224.182.206' OR domain='tetird.com'"]
+    },
+    {
+        "query": "查询同时包含47.235.24.124和mdp_hongkong的office日志",
+        "sls": "47.235.24.124 and mdp_hongkong",
+        "res": ["source_ip:47.235.24.124 and domain:mdp_hongkong", "* | SELECT * FROM office WHERE source_ip='103.224.182.206' OR domain='tetird.com'"]
+    },
+    {
+        "query": "查询一下hostname为egumomng-*并且目的端口号为3306的aegis日志",
+        "sls": "hostname:egumomng-* and dest_prot:3306",
+        "res":["hostname:egumomng-* and dest_port:3306","* | SELECT * FROM aegis WHERE hostname LIKE 'egumomng-*' AND dest_port=3306"]
+    },
+    {
+        "query": "查一查是否否有使用kill -all或者pkill命令的安骑士记录，针对33.132.33.208的",
+        "sls": "33.132.33.208 and (\"kill -all\" or pkill)",
+        "res": ["33.132.33.208 and ('kill -all' or pkill)", "* | SELECT * FROM aegis WHERE source_ip='33.132.33.208' AND (command='kill -all' OR command='pkill')"]
+    },
+    {
+        "query": "请在DNS表中检索，查询域名包含company.com或corp.com，响应时间超过200ms且响应类型为NXDOMAIN的请求",
+        "sls": "(domain:company.com or domain:corp.com) and req_time > 200 and resp_type:NXDOMAIN",
+        "res": ["(domain:company.com or domain:corp.com) and req_time > 200 and resp_type:NXDOMAIN", "* | SELECT * FROM dns WHERE (domain LIKE '%company.com%' OR domain LIKE '%corp.com%') AND req_time > 200 AND resp_type='NXDOMAIN'"]
+    },
+    {
+        "query": "查询满足发件人邮箱为user@example.com, user2@example.com或user3@example.com，且域名是任意一个：google.com, facebook.com, twitter.com的邮件日志",
+        "sls": "(mail_from:user@example.com or mail_from:user2@example.com or mail_from:user3@example.com) and (domain:google.com or domain:facebook.com or domain:twitter.com)",
+        "res": ["(mail_from:user@example.com or mail_from:user2@example.com or mail_from:user3@example.com) and (domain:google.com or domain:facebook.com or domain:twitter.com)", "* | SELECT * FROM log WHERE (mail_from IN ('user@example.com', 'user2@example.com', 'user3@example.com')) AND (domain IN ('google.com', 'facebook.com', 'twitter.com'))"]
+    },
+    {
+        "query": "查询的EDR日志，返回104.231.65.97相关的命令行",
+        "sls": "104.231.65.97 ｜ SELECT pcmdline",
+        "res": ["source_ip:104.231.65.97 | SELECT pcmdline", "* | SELECT command_line FROM edr_log WHERE ip='104.231.65.97'"]
+    },
+    {
+        "query": "查一下哪些人的电脑执行过386d058311635b5328a6c800b6718ed0程序",
+        "sls": "386d058311635b5328a6c800b6718ed0 | SELECT staff_id",
+        "res": ["program_hash:386d058311635b5328a6c800b6718ed0 | SELECT hostname, username FROM edr_log", "* | SELECT hostname, username FROM edr_log WHERE program_hash='386d058311635b5328a6c800b6718ed0'"]
+    },
+    {
+        "query": "帮我找找最近的POI日志，172.16.0.1访问的ip",
+        "sls": "source_ip:172.16.0.1 ｜ SELECT dst_ip",
+        "res": ["source_ip:172.16.0.1 | SELECT dst_ip FROM poi_log ORDER BY timestamp DESC LIMIT 1", "* | SELECT dst_ip FROM poi_log WHERE src_ip='172.16.0.1' ORDER BY timestamp DESC LIMIT 1"]
+    },
+    {
+        "query": "帮我查下星点和EDR日志4901538dff8f1800aafa5e97c6ea2817这个进程",
+        "sls": "process:4901538dff8f1800aafa5e97c6ea2817",
+        "res": ["process:4901538dff8f1800aafa5e97c6ea2817 | SELECT * FROM log WHERE (__topic__='starpoint' OR __topic__='edr')", "* | SELECT * FROM log WHERE process_hash='4901538dff8f1800aafa5e97c6ea2817' AND (__topic__='starpoint' OR __topic__='edr')"]
+    },
+    {
+        "query": "帮我查下日志，近3天哪些IP调用过LTAITIXZIZxxxxxxxx这个AK",
+        "sls": "LTAITIXZIZxxxxxxxx | SELECT ip",
+        "res": ["timestamp:last_3_days and ak:LTAITIXZIZxxxxxxxx | SELECT DISTINCT src_ip FROM log WHERE timestamp >= NOW() - INTERVAL 3 DAY", "* | SELECT DISTINCT src_ip FROM log WHERE ak='LTAITIXZIZxxxxxxxx' AND __time__ >= NOW() - 3 * 86400"]
+    },
+    {
+        "query": "请帮我检索系统日志，包含IP地址192.168.0.1，用户ID为1002，操作类型为update，状态码为200，且不包含error的数据",
+        "sls": "ip:192.168.0.1 and staff_id:1002 and type:update and status:200 and not error",
+        "res": ["ip:192.168.0.1 and user_id:1002 and operation_type:update and status_code:200 and not error", "* | SELECT * FROM log WHERE ip='192.168.0.1' AND user_id=1002 AND operation_type='update' AND status_code=200 AND NOT message : 'error'"]
+    },
+    {
+        "query": "查询星点数据，这些进程有没有出现过：C:\\Windows\\System32\\rogue.exe C:\\Program Files\\Trojan\\stealth.exe C:\\Users\\Unknown\\AppData\\Local\\Temp\\covert.exe",
+        "sls": "process:C:\\Windows\\System32\\rogue.exe or process:C:\\Program Files\\Trojan\\stealth.exe or process:C:\\Users\\Unknown\\AppData\\Local\\Temp\\covert.exe",
+        "res": ["process:C:\\Windows\\System32\\rogue.exe or process:C:\\Program Files\\Trojan\\stealth.exe or process:C:\\Users\\Unknown\\AppData\\Local\\Temp\\covert.exe", "* | SELECT * FROM log WHERE process IN ('C:\\Windows\\System32\\rogue.exe', 'C:\\Program Files\\Trojan\\stealth.exe', 'C:\\Users\\Unknown\\AppData\\Local\\Temp\\covert.exe') AND __topic__ = 'starpoint'"]
+    },
+    {
+        "query": "帮我查询sub.anotherdomain.com这个域名",
+        "sls": "domain:sub.anotherdomain.com",
+        "res": ["domain:sub.anotherdomain.com"]
+    },
+    {
+        "query": "查下这个文件C:\\Program Files\\FakeSecurityTest\\test.exe",
+        "sls": "C:\\Program Files\\FakeSecurityTest\\test.exe",
+        "res": ["C:\\Program Files\\FakeSecurityTest\\test.exe","* | SELECT * FROM log WHERE content LIKE '%C:\\Program Files\\FakeSecurityTest\\test.exe%'"]
+    },
+    {
+        "query": "请帮我在NAT日志表中，找出所有目标端口为1234的流量记录，并统计每个源IP的流量总数",
+        "sls": "dest_port:1234 | SELECT src_ip, COUNT(*) AS count GROUP BY src_ip",
+        "res": ["dest_port:1234 group_by:source_ip count(*)", "* | SELECT source_ip, COUNT(*) AS count FROM nat_log WHERE dest_port = 1234 GROUP BY source_ip"]
+    }
+]
